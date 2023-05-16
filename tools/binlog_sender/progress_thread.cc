@@ -9,7 +9,7 @@ ProgressThread::ProgressThread(BinlogConsumer* binlog_consumer) : binlog_consume
 
 void* ProgressThread::ThreadMain() {
   while (!should_stop_) {
-    printf("\rSending binlog, current file num: %d, offset: %9ld", binlog_consumer_->current_filenum(),
+    printf("\rSending binlog, current file num: %d, offset: %9llu", binlog_consumer_->current_filenum(),
            binlog_consumer_->current_offset());
     fflush(stdout);
   }

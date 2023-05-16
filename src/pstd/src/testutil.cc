@@ -33,7 +33,7 @@ int GetTestDirectory(std::string* result) {
     *result = env;
   } else {
     char buf[100];
-    snprintf(buf, sizeof(buf), "/tmp/pstdtest-%d", int(geteuid()));
+    snprintf(buf, sizeof(buf), "/tmp/pstdtest-%d", static_cast<int>(geteuid()));
     *result = buf;
   }
   return 0;

@@ -1,9 +1,13 @@
 #include "sender.h"
 
-SenderThread::SenderThread(std::string ip, int64_t port, std::string password)
-    : cli_(nullptr), ip_(ip), port_(port), password_(password), should_exit_(false), elements_(0) {}
+#include <utility>
 
-SenderThread::~SenderThread() {}
+#include <utility>
+
+SenderThread::SenderThread(std::string ip, int64_t port, std::string password)
+    : cli_(nullptr), ip_(std::move(std::move(ip))), port_(port), password_(std::move(std::move(password))), should_exit_(false), elements_(0) {}
+
+SenderThread::~SenderThread() = default;
 
 void SenderThread::ConnectPika() {
   while (cli_ == nullptr) {
@@ -21,7 +25,8 @@ void SenderThread::ConnectPika() {
 
       // Authentication
       if (!password_.empty()) {
-        net::RedisCmdArgsType argv, resp;
+        net::RedisCmdArgsType argv;
+        net::RedisCmdArgsType resp;
         std::string cmd;
 
         argv.push_back("AUTH");
@@ -48,7 +53,8 @@ void SenderThread::ConnectPika() {
         }
       } else {
         // If forget to input password
-        net::RedisCmdArgsType argv, resp;
+        net::RedisCmdArgsType argv;
+        net::RedisCmdArgsType resp;
         std::string cmd;
 
         argv.push_back("PING");
@@ -112,7 +118,7 @@ void* SenderThread::ThreadMain() {
   while (!should_exit_ || QueueSize() != 0) {
     {
       std::unique_lock lock(cmd_mutex_);
-      rsignal_.wait(lock, [this] { return !cmd_queue_.size() || should_exit_; });
+      rsignal_.wait(lock, [this] { return cmd_queue_.empty() || should_exit_; });
     }
 
     if (cli_ == nullptr) {

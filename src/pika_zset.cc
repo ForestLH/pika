@@ -5,6 +5,8 @@
 
 #include "include/pika_zset.h"
 
+#include <cstdint>
+
 #include "pstd/include/pstd_string.h"
 
 void ZAddCmd::DoInitial() {
@@ -859,7 +861,7 @@ void ZPopmaxCmd::DoInitial() {
     count_ = 1;
     return;
   }
-  if (pstd::string2int(argv_[2].data(), argv_[2].size(), static_cast<long *>(&count_)) == 0) {
+  if (pstd::string2int(argv_[2].data(), argv_[2].size(), static_cast<int64_t *>(&count_)) == 0) {
     res_.SetRes(CmdRes::kInvalidInt);
     return;
   }
@@ -893,7 +895,7 @@ void ZPopminCmd::DoInitial() {
     count_ = 1;
     return;
   }
-  if (pstd::string2int(argv_[2].data(), argv_[2].size(), static_cast<long *>(&count_)) == 0) {
+  if (pstd::string2int(argv_[2].data(), argv_[2].size(), static_cast<int64_t *>(&count_)) == 0) {
     res_.SetRes(CmdRes::kInvalidInt);
     return;
   }

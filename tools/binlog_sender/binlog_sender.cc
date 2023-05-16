@@ -7,9 +7,9 @@
 #include "ctime"
 #include "iostream"
 
-#include "stdint.h"
-#include "stdlib.h"
-#include "string.h"
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 #include "unistd.h"
 
 #include "net/include/net_cli.h"
@@ -86,7 +86,7 @@ void TryToCommunicate() {
 
     net_s = cli->Send(&auth_cmd);
     net_s = cli->Recv(&argv);
-    if (argv.size() == 1 && !strcasecmp(argv[0].c_str(), ok.c_str())) {
+    if (argv.size() == 1 && (strcasecmp(argv[0].c_str(), ok.c_str()) == 0)) {
       std::cout << "Try communicate success..." << std::endl;
     } else {
       std::cout << "Auth failed..." << std::endl;
@@ -105,7 +105,7 @@ void TryToCommunicate() {
 
     net_s = cli->Send(&ping_cmd);
     net_s = cli->Recv(&argv);
-    if (argv.size() == 1 && !strcasecmp(argv[0].c_str(), pong.c_str())) {
+    if (argv.size() == 1 && (strcasecmp(argv[0].c_str(), pong.c_str()) == 0)) {
       std::cout << "Try communicate success..." << std::endl;
     } else {
       std::cout << "Ping failed..." << std::endl;
@@ -167,7 +167,8 @@ int main(int argc, char* argv[]) {
     exit(-1);
   }
 
-  uint32_t tv_start, tv_end;
+  uint32_t tv_start;
+  uint32_t tv_end;
   struct tm tm;
   time_t timet;
   strptime(start_time_str.c_str(), "%Y-%m-%d %H:%M:%S", &tm);

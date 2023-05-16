@@ -14,7 +14,6 @@
 #include "pstd/include/pstd_string.h"
 
 #include "include/pika_rm.h"
-#include "include/pika_server.h"
 
 #include "pika_inner_message.pb.h"
 
