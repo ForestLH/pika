@@ -62,7 +62,7 @@ using GeoDirection = enum {
   GEOHASH_NORT_EAST
 };
 
-using GeoHashBits = struct {
+struct GeoHashBits {
   uint64_t bits;
   uint8_t step;
 };

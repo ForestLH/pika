@@ -50,7 +50,7 @@ class Thread {
 
   pstd::Mutex running_mu_;
   bool running_{false};
-  pthread_t thread_id_{nullptr};
+  pthread_t thread_id_{};
   std::string thread_name_;
 
 };

@@ -68,7 +68,7 @@ void Usage() {
 void TryToCommunicate() {
   cli = net::NewRedisCli();
   cli->set_connect_timeout(3000);
-  Status net_s = cli->Connect(ip, port, "");
+  pstd::Status net_s = cli->Connect(ip, port, "");
   if (!net_s.ok()) {
     std::cout << "Connect failed " << net_s.ToString().c_str() << ", exit..." << std::endl;
     exit(-1);
@@ -206,7 +206,7 @@ int main(int argc, char* argv[]) {
       if (PikaBinlogTransverter::BinlogDecode(TypeFirst, scratch, &binlog_item)) {
         std::string redis_cmd = binlog_item.content();
         if (tv_start <= binlog_item.exec_time() && binlog_item.exec_time() <= tv_end) {
-          Status net_s = cli->Send(&redis_cmd);
+          pstd::Status net_s = cli->Send(&redis_cmd);
           if (net_s.ok()) {
             net_s = cli->Recv(nullptr);
             if (net_s.ok()) {
