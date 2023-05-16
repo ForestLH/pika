@@ -146,7 +146,7 @@ unsigned int MurmurHashNeutral2(const void* key, int len, unsigned int seed) {
 
   unsigned int h = seed ^ len;
 
-  const unsigned char* data = (const unsigned char*)key;
+  const auto* data = static_cast<const unsigned char*>(key);
 
   while (len >= 4) {
     unsigned int k;

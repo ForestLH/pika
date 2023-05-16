@@ -14,10 +14,10 @@ void current_time_str(char * str, size_t max_len)
   struct timeval tv;
   struct tm tmm;
 
-  gettimeofday(&tv, 0);
+  gettimeofday(&tv, nullptr);
 
   localtime_r(&(tv.tv_sec), &tmm);
-  snprintf(str, max_len, "%04d-%02d-%02dT%02d:%02d:%02d.%06ld",
+  snprintf(str, max_len, "%04d-%02d-%02dT%02d:%02d:%02d.%06d",
            tmm.tm_year + 1900,
            tmm.tm_mon+1,
            tmm.tm_mday,
@@ -29,7 +29,7 @@ void current_time_str(char * str, size_t max_len)
 
 int GetTestDirectory(std::string* result) {
   const char* env = getenv("TEST_TMPDIR");
-  if (env && env[0] != '\0') {
+  if ((env != nullptr) && env[0] != '\0') {
     *result = env;
   } else {
     char buf[100];
