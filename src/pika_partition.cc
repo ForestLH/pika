@@ -27,14 +27,14 @@ std::string PartitionPath(const std::string& table_path, uint32_t partition_id) 
 std::string PartitionName(const std::string& table_name, uint32_t partition_id) {
   char buf[256];
   snprintf(buf, sizeof(buf), "(%s:%u)", table_name.data(), partition_id);
-  return std::string(buf);
+  return {buf};
 }
 
 std::string BgsaveSubPath(const std::string& table_name, uint32_t partition_id) {
   char buf[256];
   std::string partition_id_str = std::to_string(partition_id);
   snprintf(buf, sizeof(buf), "%s/%s", table_name.data(), partition_id_str.data());
-  return std::string(buf);
+  return {buf};
 }
 
 std::string DbSyncPath(const std::string& sync_path, const std::string& table_name, const uint32_t partition_id) {

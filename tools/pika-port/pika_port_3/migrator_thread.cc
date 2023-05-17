@@ -368,28 +368,28 @@ void MigratorThread::MigrateZsetsDB() {
 }
 
 void MigratorThread::MigrateDB() {
-  switch (int(type_)) {
-    case int(storage::kStrings): {
+  switch (static_cast<int>(type_)) {
+    case static_cast<int>(storage::kStrings): {
       MigrateStringsDB();
       break;
     }
 
-    case int(storage::kLists): {
+    case static_cast<int>(storage::kLists): {
       MigrateListsDB();
       break;
     }
 
-    case int(storage::kHashes): {
+    case static_cast<int>(storage::kHashes): {
       MigrateHashesDB();
       break;
     }
 
-    case int(storage::kSets): {
+    case static_cast<int>(storage::kSets): {
       MigrateSetsDB();
       break;
     }
 
-    case int(storage::kZSets): {
+    case static_cast<int>(storage::kZSets): {
       MigrateZsetsDB();
       break;
     }

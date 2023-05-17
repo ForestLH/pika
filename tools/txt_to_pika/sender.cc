@@ -2,7 +2,6 @@
 
 #include <utility>
 
-#include <utility>
 
 SenderThread::SenderThread(std::string ip, int64_t port, std::string password)
     : cli_(nullptr), ip_(std::move(std::move(ip))), port_(port), password_(std::move(std::move(password))), should_exit_(false), elements_(0) {}

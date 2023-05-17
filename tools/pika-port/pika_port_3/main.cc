@@ -5,6 +5,7 @@
 
 // #include <glog/logging.h>
 #include <fcntl.h>
+#include <sys/_types/_time_t.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -159,7 +160,7 @@ int main(int argc, char* argv[]) {
       case 'p':
         snprintf(buf, 1024, "%s", optarg);
         pstd::string2int(buf, strlen(buf), &(num));
-        g_conf.local_port = int(num);
+        g_conf.local_port = static_cast<int>(num);
         break;
       case 'i':
         snprintf(buf, 1024, "%s", optarg);
@@ -168,7 +169,7 @@ int main(int argc, char* argv[]) {
       case 'o':
         snprintf(buf, 1024, "%s", optarg);
         pstd::string2int(buf, strlen(buf), &(num));
-        g_conf.master_port = int(num);
+        g_conf.master_port = static_cast<int>(num);
         break;
       case 'm':
         snprintf(buf, 1024, "%s", optarg);
@@ -177,12 +178,12 @@ int main(int argc, char* argv[]) {
       case 'n':
         snprintf(buf, 1024, "%s", optarg);
         pstd::string2int(buf, strlen(buf), &(num));
-        g_conf.forward_port = int(num);
+        g_conf.forward_port = static_cast<int>(num);
         break;
       case 'x':
         snprintf(buf, 1024, "%s", optarg);
         pstd::string2int(buf, strlen(buf), &(num));
-        g_conf.forward_thread_num = int(num);
+        g_conf.forward_thread_num = static_cast<int>(num);
         break;
       case 'y':
         snprintf(buf, 1024, "%s", optarg);
@@ -191,7 +192,7 @@ int main(int argc, char* argv[]) {
       case 'z':
         snprintf(buf, 1024, "%s", optarg);
         pstd::string2int(buf, strlen(buf), &(num));
-        g_conf.wait_bgsave_timeout = time_t(num);
+        g_conf.wait_bgsave_timeout = static_cast<time_t>(num);
         break;
 
       case 'f':

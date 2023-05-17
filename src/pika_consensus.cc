@@ -922,7 +922,7 @@ Status ConsensusCoordinator::FollowerNegotiate(const std::vector<LogOffset>& hin
     return Status::Corruption("invalid hints all smaller than committed_index");
   }
   if (mem_logger_->last_offset().l_offset.index > hints[hints.size() - 1].l_offset.index) {
-    LogOffset truncate_offset = hints[hints.size() - 1];
+    const auto &truncate_offset = hints[hints.size() - 1];
     // trunck to hints end
     Status s = TruncateTo(truncate_offset);
     if (!s.ok()) {

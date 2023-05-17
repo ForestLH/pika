@@ -24,7 +24,6 @@
 #include "include/pika_cmd_table_manager.h"
 #include "include/pika_dispatch_thread.h"
 #include "include/pika_rm.h"
-#include "include/pika_server.h"
 
 using pstd::Status;
 extern PikaServer* g_pika_server;

@@ -71,7 +71,9 @@ std::string GetDefaultInterface() {
 #else
   std::string name("eth0");
   std::ifstream routeFile("/proc/net/route", std::ios_base::in);
-  if (!routeFile.good()) return name;
+  if (!routeFile.good()) {
+    return name;
+  }
 
   std::string line;
   std::vector<std::string> tokens;
