@@ -75,7 +75,7 @@ int NetEpoll::NetDelEvent(int fd, [[maybe_unused]] int mask) {
 }
 
 int NetEpoll::NetPoll(int timeout) {
-  int num_events = epoll_wait(multiplexer_, &events_[0], NET_MAX_CLIENTS, timeout);
+  int num_events = epoll_wait(multiplexer_, (events_).data(), NET_MAX_CLIENTS, timeout);
   if (num_events <= 0) {
     return 0;
   }

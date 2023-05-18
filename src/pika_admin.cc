@@ -577,7 +577,7 @@ void ClientCmd::Do(std::shared_ptr<Partition> partition) {
     }
     while (iter != clients.end()) {
       snprintf(buf, sizeof(buf), "addr=%s fd=%d idle=%lld\n", iter->ip_port.c_str(), iter->fd,
-               iter->last_interaction == 0 ? 0 : now.tv_sec - iter->last_interaction);
+               iter->last_interaction == 0 ? 0 : now.tv_sec - iter->last_interaction);  // NOLINT
       reply.append(buf);
       iter++;
     }
