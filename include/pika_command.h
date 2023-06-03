@@ -455,6 +455,7 @@ class Cmd : public std::enable_shared_from_this<Cmd> {
   virtual void Execute();
   virtual void ProcessFlushDBCmd();
   virtual void ProcessFlushAllCmd();
+  virtual void ProcessExecCmd();
   virtual void ProcessSingleSlotCmd();
   virtual void ProcessMultiSlotCmd();
   virtual void ProcessDoNotSpecifySlotCmd();
