@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS builder
+FROM ubuntu:22.10 AS builder
 
 LABEL maintainer="SvenDowideit@home.org.au, zhangshaomin_1990@126.com"
 
@@ -26,7 +26,7 @@ COPY . ${PIKA_BUILD_DIR}
 
 RUN ${PIKA_BUILD_DIR}/build.sh
 
-FROM ubuntu:22.04
+FROM ubuntu:22.10
 
 ARG ENABLE_PROXY=false
 
