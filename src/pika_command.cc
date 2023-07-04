@@ -801,7 +801,7 @@ void Cmd::ProcessExecCmd() {
     Do();
     const auto cur_slot = g_pika_server->GetSlotByDBName(db_name());
     std::shared_ptr<SyncMasterSlot> sync_slot =
-        g_pika_rm->GetSyncMasterSlotByName(SlotInfo(cur_slot->GetDBName(), cur_slot->GetSlotId()));
+        g_pika_rm->GetSyncMasterSlotByName(SlotInfo(cur_slot->GetDBName(), cur_slot->GetSlotID()));
     DoBinlog(sync_slot);
     for (const auto& slot : slots) {
       slot->DbRWUnLock();
