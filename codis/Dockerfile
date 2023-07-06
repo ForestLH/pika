@@ -1,4 +1,4 @@
-FROM golang:1.8
+FROM golang:bookworm
 
 RUN apt-get update
 RUN apt-get install -y autoconf
