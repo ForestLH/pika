@@ -678,13 +678,15 @@ void InitCmdTable(CmdTable* cmd_table) {
 
   // Transaction
   ////Multi
-  std::unique_ptr<Cmd> multiptr = std::make_unique<MultiCmd>(kCmdNameMulti, 1, kCmdFlagsRead | kCmdFlagsWrite);
+  std::unique_ptr<Cmd> multiptr =
+      std::make_unique<MultiCmd>(kCmdNameMulti, 1, kCmdFlagsRead | kCmdFlagsMultiSlot);
   cmd_table->insert(std::pair<std::string, std::unique_ptr<Cmd>>(kCmdNameMulti, std::move(multiptr)));
   ////Exec
-  std::unique_ptr<Cmd> execptr = std::make_unique<ExecCmd>(kCmdNameExec, 1, kCmdFlagsRead | kCmdFlagsWrite);
+  std::unique_ptr<Cmd> execptr =
+      std::make_unique<ExecCmd>(kCmdNameExec, 1, kCmdFlagsRead | kCmdFlagsWrite | kCmdFlagsMultiSlot | kCmdFlagsSuspend);
   cmd_table->insert(std::pair<std::string, std::unique_ptr<Cmd>>(kCmdNameExec, std::move(execptr)));
   ////Discard
-  std::unique_ptr<Cmd> discardptr = std::make_unique<DiscardCmd>(kCmdNameDiscard, 1, kCmdFlagsRead | kCmdFlagsWrite);
+  std::unique_ptr<Cmd> discardptr = std::make_unique<DiscardCmd>(kCmdNameDiscard, 1, kCmdFlagsRead);
   cmd_table->insert(std::pair<std::string, std::unique_ptr<Cmd>>(kCmdNameDiscard, std::move(discardptr)));
   ////Watch
   std::unique_ptr<Cmd> watchptr = std::make_unique<WatchCmd>(kCmdNameWatch, -2, kCmdFlagsRead);
@@ -723,8 +725,6 @@ void Cmd::Execute() {
     ProcessFlushAllCmd();
   } else if (name_ == kCmdNameInfo || name_ == kCmdNameConfig) {
     ProcessDoNotSpecifySlotCmd();
-  } else if (name_ == kCmdNameExec) {
-    ProcessExecCmd();
   } else {
     ProcessSingleSlotCmd();
   }
@@ -778,38 +778,8 @@ void Cmd::ProcessFlushAllCmd() {
   }
   res_.SetRes(CmdRes::kOk);
 }
-/**
- * TODO(leeHao): 这个exec命令本身的binlog我不确定如何处理,我感觉应该还是需要写的，因为如果执行队列中的命令，执行到了一半但是退出了
- * 那么下次启动的时候，应该回滚部分操作？
- * TODO(leeHao): 还有个得到执行时间的函数,这个统计命令时间，是统计事务队列中，每个命令单独统计还是统计一整个队列的执行时长
- * 这里因为是多个db的锁，所以需要注意执行顺序，否则就会死锁，我的选择是，先拿取一把大锁
- * 然后将所有的锁给拿齐了，再释放掉这把大锁
- */
-void Cmd::ProcessExecCmd() {
-  auto conn_ptr = GetConn();
-  if (auto cli_conn = std::dynamic_pointer_cast<PikaClientConn>(conn_ptr); cli_conn != nullptr) {
-    std::lock_guard<std::mutex> lg(cli_conn->GetTxnDbMutex());
-    auto dbs = cli_conn->GetTxnInvolvedDbs();
-    auto slots = std::unordered_set<std::shared_ptr<Slot>>{};
-    for (const auto& db_name : dbs) {
-      slots.emplace(g_pika_server->GetSlotByDBName(db_name));
-    }
-
-    for (const auto& slot : slots) {
-      slot->DbRWLockWriter();
-    }
-    Do();
-    const auto cur_slot = g_pika_server->GetSlotByDBName(db_name());
-    std::shared_ptr<SyncMasterSlot> sync_slot =
-        g_pika_rm->GetSyncMasterSlotByName(SlotInfo(cur_slot->GetDBName(), cur_slot->GetSlotID()));
-    DoBinlog(sync_slot);
-    for (const auto& slot : slots) {
-      slot->DbRWUnLock();
-    }
-  } else {
-    res_.SetRes(CmdRes::kErrOther, "Client connection error");
-  }
-}
+// TODO(leeHao): exec命令执行时间，是统计事务队列中，每个命令单独统计还是统计一整个队列的执行时长
+// 目前我的做法是统计，exec命令的执行时间是统计整个队列的执行时间
 
 void Cmd::ProcessSingleSlotCmd() {
   std::shared_ptr<Slot> slot;
@@ -865,17 +835,8 @@ void Cmd::InternalProcessCommand(const std::shared_ptr<Slot>& slot, const std::s
   }
 }
 
-//NOTE 这里会加锁
-// 这不是一个override的函数
 void Cmd::DoCommand(const std::shared_ptr<Slot>& slot, const HintKeys& hint_keys) {
   if (!is_suspend()) {
-    auto cli_conn = std::dynamic_pointer_cast<PikaClientConn>(GetConn());
-    if (cli_conn != nullptr) {
-      if (cli_conn->IsInTxn()) {
-        Do(slot);
-        return ;
-      }
-    }
     slot->DbRWLockReader();
   }
 
@@ -913,7 +874,6 @@ void Cmd::DoBinlog(const std::shared_ptr<SyncMasterSlot>& slot) {
   }
 }
 
-//NOTE 虽然这里multiSlot，但是好像只能针对于一个db,所以这里无法在exec中使用
 void Cmd::ProcessMultiSlotCmd() {
   std::shared_ptr<Slot> slot;
   std::vector<std::string> cur_key = current_key();

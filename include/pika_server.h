@@ -35,9 +35,10 @@
 #include "include/pika_repl_client.h"
 #include "include/pika_repl_server.h"
 #include "include/pika_rsync_service.h"
+#include "include/pika_migrate_thread.h"
 #include "include/pika_statistic.h"
 #include "include/pika_slot_command.h"
-#include "include/pika_migrate_thread.h"
+#include "include/pika_transaction.h"
 
 
 
@@ -459,6 +460,7 @@ class PikaServer : public pstd::noncopyable {
   friend class InfoCmd;
   friend class PikaReplClientConn;
   friend class PkClusterInfoCmd;
+  friend class ExecCmd;
 
  private:
   /*
