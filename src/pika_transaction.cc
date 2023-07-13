@@ -112,6 +112,8 @@ void ExecCmd::Do(std::shared_ptr<Slot> slot) {
 void ExecCmd::Execute() {
   std::shared_ptr<Slot> slot;
   slot = g_pika_server->GetSlotByDBName(db_name_);
+  // TODO(leeHao) 将加锁部分移到这里来，并且还需要检测事务队列当中是否出现flushDB等命令(is_suspend()函数可以判断)
+  // 如果是 flushdb 这样的命令，那么就是直接在最开始将所有的锁全部加好，加完之后再执行，直接调用FlushAllSlots这个函数即可，里面不涉及到加锁
   Do(slot);
 }
 

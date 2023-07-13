@@ -18,6 +18,7 @@
 #include "storage/storage.h"
 
 #include "include/pika_command.h"
+#include "pika_db.h"
 
 /*
  * Admin
@@ -158,7 +159,8 @@ class FlushallCmd : public Cmd {
   void Split(std::shared_ptr<Slot> slot, const HintKeys& hint_keys) override{};
   void Merge() override{};
   Cmd* Clone() override { return new FlushallCmd(*this); }
-
+  void Execute() override;
+  void FlushAllWithoutLock();
  private:
   void DoInitial() override;
   std::string ToBinlog(uint32_t exec_time, uint32_t term_id, uint64_t logic_id, uint32_t filenum,
@@ -172,6 +174,8 @@ class FlushdbCmd : public Cmd {
   void Split(std::shared_ptr<Slot> slot, const HintKeys& hint_keys) override{};
   void Merge() override{};
   Cmd* Clone() override { return new FlushdbCmd(*this); }
+  void FlushAllSlots(std::shared_ptr<DB> db);
+  void Execute() override;
 
  private:
   std::string db_name_;
@@ -219,6 +223,7 @@ class InfoCmd : public Cmd {
   void Split(std::shared_ptr<Slot> slot, const HintKeys& hint_keys) override{};
   void Merge() override{};
   Cmd* Clone() override { return new InfoCmd(*this); }
+  void Execute() override { Do(); }
 
  private:
   InfoSection info_section_;
@@ -280,6 +285,7 @@ class ConfigCmd : public Cmd {
   void Split(std::shared_ptr<Slot> slot, const HintKeys& hint_keys) override{};
   void Merge() override{};
   Cmd* Clone() override { return new ConfigCmd(*this); }
+  void Execute() override { Do(); }
 
  private:
   std::vector<std::string> config_args_v_;
