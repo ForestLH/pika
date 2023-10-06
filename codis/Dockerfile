@@ -1,4 +1,4 @@
-FROM golang:1.8
+FROM golang:1.21.1
 
 RUN apt-get update
 RUN apt-get install -y autoconf
