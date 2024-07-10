@@ -1,3 +1,4 @@
 jury-test==0.0.3
 redis==4.4.4
 toml==0.10.2
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
