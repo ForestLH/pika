@@ -2,7 +2,7 @@
   "dependencies": {
     "angular": "^1.4.8",
     "angular-ui-bootstrap": "^0.14.3",
-    "bootstrap": "^3.3.6",
+    "bootstrap": "^5.0.0",
     "bootstrap-dialog": "^1.34.6",
     "highcharts": "^4.1.10",
     "highcharts-ng": "0.0.11",
