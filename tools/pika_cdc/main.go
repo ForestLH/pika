@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	if pikaServer, err := pika.New(conf.ConfigInstance.PikaServer, conf.ConfigInstance.BufferMsgNumbers); err != nil {
+	if pikaServer, err := pika.New(conf.ConfigInstance.PikaReplServer, conf.ConfigInstance.BufferMsgNumbers); err != nil {
 		logrus.Fatal("failed to connect pika server, {}", err)
 	} else {
 		if consumers, err := consumer.GenerateConsumers(conf.ConfigInstance, pikaServer.MsgChanns); err != nil {

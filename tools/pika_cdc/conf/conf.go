@@ -13,7 +13,8 @@ import (
 )
 
 type PikaCdcConfig struct {
-	PikaServer         string   `yaml:"pika_server"`
+	PikaReplServer     string   `yaml:"pika_repl_server"`
+	PikaClientServer   string   `yaml:"pika_client_server"`
 	KafkaServers       []string `yaml:"kafka_servers"`
 	RedisServers       []string `yaml:"redis_servers"`
 	Retries            int      `yaml:"retries"`

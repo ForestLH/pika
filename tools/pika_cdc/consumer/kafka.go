@@ -35,9 +35,8 @@ func NewKafka(server string, retries int, msgChanns map[string]chan []byte) (*Ka
 		conn, err := kafka.DialLeader(context.Background(), "tcp", server, dbname, 0)
 		if err != nil {
 			return k, err
-		} else {
-			k.kafkaConns[dbname] = conn
 		}
+		k.kafkaConns[dbname] = conn
 		k.msgChanns[dbname] = chann
 	}
 	k.stopChan = make(chan bool)

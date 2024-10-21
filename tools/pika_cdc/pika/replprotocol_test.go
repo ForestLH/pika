@@ -14,14 +14,14 @@ import (
 	"os"
 	"pika_cdc/conf"
 	"pika_cdc/pika/proto/inner"
-	"strconv"
 	"testing"
 	"time"
 )
 
 func TestConnect(t *testing.T) {
 	cxt := context.Background()
-	addr := "127.0.0.1:9221"
+
+	addr := conf.ConfigInstance.PikaClientServer
 	client := redis.NewClient(&redis.Options{
 		Addr:     addr,
 		Password: "", // no password set
@@ -31,14 +31,13 @@ func TestConnect(t *testing.T) {
 }
 
 func TestSendMetaSync(t *testing.T) {
-	ip := string("127.0.0.1")
+	ip := "127.0.0.1"
 	listener, e := net.Listen("tcp", ":0")
 	if e != nil {
 		os.Exit(1)
 	}
 	selfPort := getPort(listener.Addr().String())
-	var masterPort int32 = getPort(conf.ConfigInstance.PikaServer) + 2000
-	addr := ip + ":" + strconv.Itoa(int(masterPort))
+	addr := conf.ConfigInstance.PikaReplServer
 	tt := inner.Type_kMetaSync
 	request := inner.InnerRequest{
 		Type: &tt,
@@ -116,9 +115,7 @@ func getResponse(conn net.Conn) *inner.InnerResponse {
 
 func sendReplReq(conn net.Conn, request *inner.InnerRequest) (net.Conn, error) {
 	if conn == nil {
-		ip := string("127.0.0.1")
-		var masterReplPort int32 = getPort(conf.ConfigInstance.PikaServer) + 2000
-		addr := ip + ":" + strconv.Itoa(int(masterReplPort))
+		addr := conf.ConfigInstance.PikaReplServer
 		newConn, err := net.Dial("tcp", addr)
 		if err != nil {
 			return nil, err
@@ -141,9 +138,7 @@ func sendReplReq(conn net.Conn, request *inner.InnerRequest) (net.Conn, error) {
 
 func sendMetaSyncRequest(conn net.Conn) (net.Conn, error) {
 	if conn == nil {
-		ip := string("127.0.0.1")
-		var masterReplPort int32 = getPort(conf.ConfigInstance.PikaServer) + 2000
-		addr := ip + ":" + strconv.Itoa(int(masterReplPort))
+		addr := conf.ConfigInstance.PikaReplServer
 		newConn, err := net.Dial("tcp", addr)
 		if err != nil {
 			return nil, err
@@ -166,7 +161,7 @@ func sendMetaSyncRequest(conn net.Conn) (net.Conn, error) {
 }
 
 func TestGetOffsetFromMaster(t *testing.T) {
-	ip := string("127.0.0.1")
+	ip := "127.0.0.1"
 	listener, e := net.Listen("tcp", ":0")
 	if e != nil {
 		os.Exit(1)
@@ -217,7 +212,7 @@ func TestGetOffsetFromMaster(t *testing.T) {
 }
 
 func TestSendDbSyncReqMsg(t *testing.T) {
-	ip := string("127.0.0.1")
+	ip := "127.0.0.1"
 	listener, e := net.Listen("tcp", ":0")
 	if e != nil {
 		os.Exit(1)
@@ -279,7 +274,7 @@ func BuildInternalTag(resp []byte) (tag string) {
 	return string(buf)
 }
 
-// CustomData 解析后的自定义数据结构
+// Pika Binlog Item
 type BinlogItem struct {
 	Type          uint16
 	CreateTime    uint32
@@ -291,6 +286,8 @@ type BinlogItem struct {
 	Content       []byte
 }
 
+// Test incremental synchronization of data
+// pika -> redis
 func TestGetIncrementalSync(t *testing.T) {
 	conn, err := sendMetaSyncRequest(nil)
 	if err != nil {
@@ -391,6 +388,7 @@ func TestGetIncrementalSync(t *testing.T) {
 			}
 		}()
 	}
+	// never stop as a backend service
 	for {
 	}
 }

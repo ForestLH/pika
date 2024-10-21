@@ -1,5 +1,7 @@
 # pika_server, this port is pika replication port.
-pika_server : 127.0.0.1:11221
+pika_repl_server : 127.0.0.1:11221
+# pika_server, this port is pika redis client port.
+pika_client_server : 127.0.0.1:9221
 # For data from one DB of one pika, a separate MQ topic is created,
 # and the name of the topic is the dbname of the pika
 kafka_servers:
